@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Magical Birthday Surprise</title>
+    <style>
+        :root {
+            --sky-soft: #A9D8FA;
+            --sky-light: #DCEEFF;
+            --sky-deep: #4A90E2;
+            --text-dark: #2C3E50;
+            --text-muted: #59738E;
+            --white: #FFFFFF;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --border-glow: rgba(169, 216, 250, 0.8);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, var(--sky-light) 0%, var(--sky-soft) 50%, var(--white) 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        section {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            min-height: 85vh;
+            padding: 40px 20px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        section.active {
+            display: flex;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(74, 144, 226, 0.15);
+            max-width: 700px;
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--sky-soft), var(--sky-deep));
+            color: var(--white);
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-back {
+            background: #cbd5e1;
+            color: var(--text-dark);
+            box-shadow: none;
+        }
+
+        .btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        #lock-screen, #welcome {
+            background: radial-gradient(circle at center, var(--white) 0%, var(--sky-light) 100%);
+            border-radius: 20px;
+        }
+
+        .lock-badge, .welcome-badge {
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--sky-deep);
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 500px;
+            width: 100%;
+            margin-top: 25px;
+        }
+
+        .countdown-box {
+            background: var(--white);
+            padding: 15px 5px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(169, 216, 250, 0.3);
+            border: 1px solid var(--sky-soft);
+        }
+
+        .countdown-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--sky-deep);
+        }
+
+        .countdown-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .gift-box {
+            font-size: 70px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+
+        .hidden-surprise {
+            display: none;
+            margin-top: 20px;
+        }
+
+        /* Spacing above cake */
+        .cake-container {
+            position: relative;
+            margin: 60px auto 40px auto;
+            width: 200px;
+            height: 180px;
+        }
+
+        .candle {
+            position: absolute;
+            width: 10px;
+            height: 35px;
+            background: #ffffff;
+            border-radius: 3px;
+            top: -30px;
+            left: 95px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+        }
+
+        .flame {
+            position: absolute;
+            width: 14px;
+            height: 20px;
+            background: #ff9800;
+            border-radius: 50% 50% 20% 20%;
+            top: -22px;
+            left: -2px;
+        }
+
+        .flame.extinguished {
+            display: none;
+        }
+
+        .cake-body {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(135deg, var(--white), var(--sky-soft));
+            border-radius: 15px 15px 10px 10px;
+            border: 2px solid var(--white);
+            box-shadow: 0 10px 25px rgba(74, 144, 226, 0.2);
+        }
+
+        .cake-frosting {
+            position: absolute;
+            top: 25px;
+            width: 100%;
+            height: 20px;
+            background: var(--sky-deep);
+            opacity: 0.3;
+            border-radius: 10px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+
+        .card-box {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(169, 216, 250, 0.2);
+            border: 1px solid var(--sky-soft);
+            text-align: left;
+        }
+
+        /* Gallery image styling */
+        .gallery-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* A5 Sized Handwritten Note Box */
+        .a5-note-container {
+            width: 100%;
+            max-width: 420px;
+            min-height: 480px;
+            border: 2px dashed var(--sky-deep);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--sky-light);
+            color: var(--sky-deep);
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Custom Popup Modal Styles */
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 62, 80, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-modal-content {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(74, 144, 226, 0.3);
+            border: 1px solid var(--sky-soft);
+        }
+
+        @media (max-width: 768px) {
+            .countdown-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .welcome-title {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 0. Midnight Lock Screen -->
+    <section id="lock-screen" class="active">
+        <div class="lock-badge">A little Secret inside</div>
+        <h1 class="section-title">Ruk Ja Thori Dair Nikami...</h1>
+        <p style="color: var(--text-muted); max-width: 500px; line-height: 1.5;">Wait until the clock strikes 12:00 AM!</p>
+        
+        <div class="countdown-grid">
+            <div class="countdown-box"><div class="countdown-number" id="lock-days">00</div><div class="countdown-label">Days</div></div>
+            <div class="countdown-box"><div class="countdown-number" id="lock-hours">00</div><div class="countdown-label">Hours</div></div>
+            <div class="countdown-box"><div class="countdown-number" id="lock-minutes">00</div><div class="countdown-label">Minutes</div></div>
+            <div class="countdown-box"><div class="countdown-number" id="lock-seconds">00</div><div class="countdown-label">Seconds</div></div>
+        </div>
+
+        <button class="btn" id="enterBtn" onclick="goToSection('welcome')" disabled style="margin-top: 30px;">Waiting for Midnight...</button>
+    </section>
+
+    <!-- 1. Welcome Screen -->
+    <section id="welcome">
+        <div class="welcome-badge">Special Birthday Celebration</div>
+        <h1 class="welcome-title">Happy Birthday Nikami 🌚</h1>
+        <p class="welcome-subtitle">A dreamy, magical journey created just for you.</p>
+        <div class="button-group">
+            <button class="btn" onclick="goToSection('invitation')">Let's go for a ride &gt;&gt;</button>
+        </div>
+    </section>
+
+    <!-- 2. Invitation -->
+    <section id="invitation">
+        <h2 class="section-title">Would you like to join</h2>
+        <div class="glass-card" style="text-align: left;">
+            <p style="margin-bottom: 10px;"><strong>Duffer,</strong></p>
+            <p style="line-height: 1.5;">ik Raat keh lie apni sari manoos dosto ko chor kr is Ride peh Chalo gi kia mery Sath .</p>
+        </div>
+        <div class="button-group">
+            <button class="btn btn-back" onclick="goToSection('welcome')">&lt;&lt; Wpis to nahi jana</button>
+            <button class="btn" onclick="goToSection('countdown')">Thori or agy jayin kia &gt;&gt;</button>
+        </div>
+    </section>
+
+    <!-- 3. Countdown -->
+    <section id="countdown">
+        <h2 class="section-title">Finally it's time</h2>
+        <div class="countdown-grid">
+            <div class="countdown-box"><div class="countdown-number" id="days">00</div><div class="countdown-label">Days</div></div>
+            <div class="countdown-box"><div class="countdown-number" id="hours">00</div><div class="countdown-label">Hours</div></div>
+            <div class="countdown-box"><div class="countdown-number" id="minutes">00</div><div class="countdown-label">Minutes</div></div>
+            <div class="countdown-box"><div class="countdown-number" id="seconds">00</div><div class="countdown-label">Seconds</div></div>
+        </div>
+        <div class="button-group">
+            <button class="btn btn-back" onclick="goToSection('invitation')">&lt;&lt; Phir seh wpis jana hai kia</button>
+            <button class="btn" onclick="goToSection('surprise')">Thora or jaty Hain na agy &gt;&gt;</button>
+        </div>
+    </section>
+
+    <!-- 4. Surprise -->
+    <section id="surprise">
+        <h2 class="section-title">A Special Surprise</h2>
+        <div class="gift-box" id="giftBoxEl" onclick="openGift()">🎁</div>
+        <div class="glass-card hidden-surprise" id="surpriseCard">
+            <h3 style="color: var(--sky-deep); margin-bottom: 10px;">Boooooom!</h3>
+            <p>Tumhin kia Laga tha is mein 😂 ptakha hona duffer woh to Tum ho</p>
+        </div>
+        <div class="button-group">
+            <button class="btn btn-back" onclick="goToSection('countdown')">&lt;&lt; Ab to nahi jana wpis</button>
+            <button class="btn" onclick="goToSection('message')">Bs Thora SA or agy &gt;&gt;</button>
+        </div>
+    </section>
+
+    <!-- 5. Message -->
+    <section id="message">
+        <h2 class="section-title">Ik Zarori Bat</h2>
+        <div class="glass-card">
+            <p style="font-style: italic; line-height: 1.6;">"To someone who brings so much warmth and light into the world—may your birthday be as radiant and beautiful as your spirit!"</p>
+        </div>
+        <div class="button-group">
+            <button class="btn btn-back" onclick="goToSection('surprise')">&lt;&lt; Ab kia krna wpis ja keh</button>
+            <button class="btn" onclick="goToSection('cake')">Hogia khtam bs &gt;&gt;</button>
+        </div>
+    </section>
+
+    <!-- 6. Cake -->
+    <section id="cake">
+        <h2 class="section-title">Birthday hai to cake to hoga hi</h2>
+        <p style="color: var(--text-muted); margin-bottom: 15px;">Bhokr phely Candle to bojha lo!</p>
+        <div class="cake-container">
+            <div class="candle" onclick="extinguishCandle()"><div class="flame" id="candleFlame"></div></div>
+            <div class="cake-body"><div class="cake-frosting"></div></div>
+        </div>
+        <div class="button-group">
+            <button class="btn btn-back" onclick="goToSection('message')">&lt;&lt; Bhokr cake kha keh wpis ja rhi</button>
+            <button class="btn" onclick="goToSection('gallery')">Jao akeli ab &gt;&gt;</button>
+        </div>
+    </section>
+
+    <!-- 7. Memories Gallery with pic1, pic2, pic3 -->
+    <section id="gallery">
+        <h2 class="section-title">Memories Gallery 📸</h2>
+        <div class="grid-3">
+            <div class="card-box">
+                <img src="images/pic1.jpg" alt="Memory 1" class="gallery-img">
+            </div>
+            <div class="card-box">
+                <img src="images/pic2.jpg" alt="Memory 2" class="gallery-img">
+            </div>
+            <div class="card-box">
+                <img src="images/pic3.jpg" alt="Memory 3" class="gallery-img">
+            </div>
+        </div>
+        <div class="button-group">
+            <button class="btn btn-back" onclick="goToSection('cake')">&lt;&lt; shi shi jao</button>
+            <button class="btn" onclick="goToSection('handwritten')">ab to bs 5min or &gt;&gt;</button>
+        </div>
+    </section>
+
+    <!-- 8. Handwritten Note (A5 Size) -->
+    <section id="handwritten">
+        <h2 class="section-title">Ik nikama Chand</h2>
+        <div class="glass-card">
+            <div class="a5-note-container">
+                <p><strong>[ A5 Size Handwritten Note Area ]</strong></p>
+                <p style="font-size: 0.8rem; margin-top: 10px; opacity: 0.8;">(Your letter image fits here)</p>
+            </div>
+        </div>
+        <div class="button-group">
+            <button class="btn btn-back" onclick="goToSection('gallery')">&lt;&lt; kaha ja rhi</button>
+            <button class="btn" onclick="goToSection('littlethings')">Bs hogia ab &gt;&gt;</button>
+        </div>
+    </section>
+
+    <!-- 9. Little Things -->
+    <section id="littlethings">
+        <h2 class="section-title">Wish krdo kia</h2>
+        <div class="grid-3">
+            <div class="card-box"><strong>Coffee Chats</strong><p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Warm laughs and great talks.</p></div>
+            <div class="card-box"><strong>Bright Spirit</strong><p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Lighting up every room.</p></div>
+            <div class="card-box"><strong>Good Vibes</strong><p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Peaceful days ahead.</p></div>
+        </div>
+        <div class="button-group">
+            <button class="btn btn-back" onclick="goToSection('handwritten')">&lt;&lt; Mar gie</button>
+            <button class="btn" onclick="goToSection('wishes')">Yahi bacha bs &gt;&gt;</button>
+        </div>
+    </section>
+
+    <!-- 10. Wishes -->
+    <section id="wishes">
+        <h2 class="section-title">Alo ki shakl wali</h2>
+        <div class="grid-3">
+            <div class="card-box"><h4>Joy</h4><p style="font-size: 0.85rem; margin-top: 5px;">Filled with contagious laughter and bright smiles.</p></div>
+            <div class="card-box"><h4>Success</h4><p style="font-size: 0.85rem; margin-top: 5px;">Every goal coming closer into view.</p></div>
+            <div class="card-box"><h4>Peace</h4><p style="font-size: 0.85rem; margin-top: 5px;">Clear blue skies and complete tranquility.</p></div>
+        </div>
+        <div class="button-group">
+            <button class="btn btn-back" onclick="goToSection('littlethings')">&lt;&lt; Mar gie</button>
+            <button class="btn" onclick="goToSection('finale')">Story q nahi lagie &gt;&gt;</button>
+        </div>
+    </section>
+
+    <!-- 11. Finale -->
+    <section id="finale">
+        <h2 class="section-title">Happy Birthday Fiza Rani!</h2>
+        <p style="color: var(--text-muted); margin-bottom: 20px;">Happy birthday nikami Marna to Tum NH mery hatho 😴.</p>
+        <div class="button-group">
+            <button class="btn btn-back" onclick="goToSection('wishes')">&lt;&lt; Back</button>
+            <button class="btn" onclick="showCustomModal('🎂', 'Happy Birthday Fiza!', 'Party kab deni hai ab?!')">Celebrate</button>
+        </div>
+    </section>
+
+    <!-- Custom Popup Modal -->
+    <div id="customModal" class="custom-modal">
+        <div class="custom-modal-content">
+            <div style="font-size: 2.5rem; margin-bottom: 10px;" id="modalEmoji">✨</div>
+            <h3 style="color: var(--sky-deep); margin-bottom: 10px;" id="modalTitle">Notice</h3>
+            <p style="color: var(--text-dark); font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;" id="modalText">Message here</p>
+            <button class="btn" onclick="closeCustomModal()" style="padding: 10px 24px;">Got it! ✨</button>
+        </div>
+    </div>
+
+    <script>
+        // Set target date and time
+        // TIP: Change year to 2020 temporarily to test/edit freely, then back to target date before sending!
+        const unlockTime = new Date("2026-10-31T00:00:00").getTime();
+
+        function checkMidnightLock() {
+            const now = new Date().getTime();
+            const distance = unlockTime - now;
+
+            const enterBtn = document.getElementById("enterBtn");
+            const lockDays = document.getElementById("lock-days");
+            const lockHours = document.getElementById("lock-hours");
+            const lockMins = document.getElementById("lock-minutes");
+            const lockSecs = document.getElementById("lock-seconds");
+
+            if (distance <= 0) {
+                if (lockDays) lockDays.innerText = "00";
+                if (lockHours) lockHours.innerText = "00";
+                if (lockMins) lockMins.innerText = "00";
+                if (lockSecs) lockSecs.innerText = "00";
+
+                if (enterBtn) {
+                    enterBtn.removeAttribute("disabled");
+                    enterBtn.innerText = "Enter Celebration >>";
+                    enterBtn.style.background = "linear-gradient(135deg, var(--sky-soft), var(--sky-deep))";
+                }
+            } else {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                if (lockDays) lockDays.innerText = String(days).padStart(2, '0');
+                if (lockHours) lockHours.innerText = String(hours).padStart(2, '0');
+                if (lockMins) lockMins.innerText = String(minutes).padStart(2, '0');
+                if (lockSecs) lockSecs.innerText = String(seconds).padStart(2, '0');
+            }
+        }
+
+        setInterval(checkMidnightLock, 1000);
+        checkMidnightLock();
+
+        function goToSection(sectionId) {
+            const sections = document.querySelectorAll('section');
+            sections.forEach(function(sec) {
+                sec.classList.remove('active');
+            });
+            
+            const target = document.getElementById(sectionId);
+            if (target) {
+                target.classList.add('active');
+            }
+        }
+
+        setInterval(function() {
+            const now = new Date().getTime();
+            const d = unlockTime - now;
+            if (d > 0) {
+                const daysElem = document.getElementById("days");
+                const hoursElem = document.getElementById("hours");
+                const minsElem = document.getElementById("minutes");
+                const secsElem = document.getElementById("seconds");
+
+                if (daysElem) daysElem.innerText = String(Math.floor(d / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                if (hoursElem) hoursElem.innerText = String(Math.floor((d % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                if (minsElem) minsElem.innerText = String(Math.floor((d % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                if (secsElem) secsElem.innerText = String(Math.floor((d % (1000 * 60)) / 1000));
+            }
+        }, 1000);
+
+        function openGift() {
+            const giftBox = document.getElementById("giftBoxEl");
+            const surpriseCard = document.getElementById("surpriseCard");
+            
+            if (giftBox) giftBox.innerText = "🎉";
+            if (surpriseCard) surpriseCard.style.display = "block";
+        }
+
+        function showCustomModal(emoji, title, text) {
+            document.getElementById("modalEmoji").innerText = emoji;
+            document.getElementById("modalTitle").innerText = title;
+            document.getElementById("modalText").innerText = text;
+            document.getElementById("customModal").style.display = "flex";
+        }
+
+        function closeCustomModal() {
+            document.getElementById("customModal").style.display = "none";
+        }
+
+        function extinguishCandle() {
+            const flame = document.getElementById("candleFlame");
+            if (flame) {
+                flame.classList.toggle("extinguished");
+                if (flame.classList.contains("extinguished")) {
+                    showCustomModal("🕯️", "Make a Wish!", "Chal ab ik wish mang leh!");
+                }
+            }
+        }
+    </script>
+</body>
+</html>
